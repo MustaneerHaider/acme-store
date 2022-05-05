@@ -1,3 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand&family=Roboto+Slab&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  button {
+    @apply outline-none disabled:cursor-not-allowed disabled:bg-opacity-75;
+  }
+  input {
+    @apply font-quick;
+  }
+}
+
+@layer components {
+  .inputField {
+    @apply border border-[#444] bg-transparent py-2 pl-4 text-white outline-none ring-[#444] focus:ring-2;
+  }
+  .btn {
+    @apply mt-5 rounded-sm border border-black p-2 font-quick font-semibold hover:bg-black hover:text-white;
+  }
+
+  .icon {
+    @apply h-7 w-7 transform text-white transition duration-150 ease-out hover:scale-110 hover:cursor-pointer;
+  }
+}
