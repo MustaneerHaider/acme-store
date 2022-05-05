@@ -16,9 +16,16 @@ connectToDB()
 
 const resolvers = {
   Query: {
-    async products() {
+    async products(_: any, { page = 1 }: { page: number }) {
+      const ITEMS_PER_PAGE = 3
       const products = await Product.find()
-      return products
+        .skip((page - 1) * ITEMS_PER_PAGE)
+        .limit(ITEMS_PER_PAGE)
+      const totalItems = await Product.find().countDocuments()
+      return {
+        prods: products,
+        totalPage: Math.ceil(totalItems / ITEMS_PER_PAGE),
+      }
     },
     async product(_: any, { id }: { id: string }) {
       const product = await Product.findById(id)

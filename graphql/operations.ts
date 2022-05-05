@@ -19,13 +19,16 @@ export const CREATE_PRODUCT_MUTATION = gql`
 `
 
 export const GET_ALL_PRODUCTS = gql`
-  query GetAllProducts {
-    products {
-      id
-      title
-      price
-      image
-      description
+  query GetAllProducts($page: Int) {
+    products(page: $page) {
+      prods {
+        id
+        title
+        price
+        image
+        description
+      }
+      totalPage
     }
   }
 `

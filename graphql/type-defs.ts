@@ -25,6 +25,11 @@ const typeDefs = gql`
     quantity: Int!
   }
 
+  type ProductsResult {
+    prods: [Product!]!
+    totalPage: Int!
+  }
+
   type Response {
     message: String!
   }
@@ -56,7 +61,7 @@ const typeDefs = gql`
   }
 
   type Query {
-    products: [Product!]!
+    products(page: Int): ProductsResult!
     product(id: ID!): Product
     checkoutSession(input: CheckoutSessionInput!): ID!
     cartItems(userId: ID!): [CartProduct!]!
