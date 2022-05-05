@@ -11,7 +11,6 @@
     "@heroicons/react": "^1.0.6",
     "@mantine/core": "^4.2.1",
     "@mantine/next": "^4.2.1",
-    "@prisma/client": "^3.13.0",
     "@reduxjs/toolkit": "^1.8.1",
     "@stripe/stripe-js": "^1.29.0",
     "@tailwindcss/line-clamp": "^0.4.0",
