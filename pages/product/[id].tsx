@@ -27,7 +27,6 @@ const Product: NextPage<Props> = ({ product }) => {
         pid: product.id,
       },
     })
-    console.log(result)
     if (result.data) {
       dispatch(addToCart({ ...product, quantity: 1 }))
     }
