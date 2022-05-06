@@ -2,7 +2,6 @@ import { Schema, models, model } from 'mongoose'
 
 const orderSchema = new Schema(
   {
-    stripeId: String,
     products: [
       {
         product: Object,

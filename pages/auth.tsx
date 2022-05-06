@@ -54,7 +54,6 @@ const Auth: NextPage = () => {
         email,
         password,
       })
-      console.log(result)
       if (result!['error']) {
         setSubmitting(false)
         toast.error(result!['error'], {
@@ -75,7 +74,6 @@ const Auth: NextPage = () => {
           throw new Error(result.errors[0].message)
         }
         if (result.data) {
-          console.log(result.data)
           toast.success('Account created successfully.', {
             style: toastStyles,
             duration: 2000,

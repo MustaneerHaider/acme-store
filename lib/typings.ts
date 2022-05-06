@@ -5,13 +5,6 @@ export interface UserInput {
   }
 }
 
-export interface CheckoutSessionInput {
-  input: {
-    items: Product[]
-    userId: string
-  }
-}
-
 export interface Credentials {
   email: string
   password: string
@@ -45,4 +38,16 @@ export interface StripeSession {
     userId: string
   }
   amount_total: number
+}
+
+export type OrderItem = {
+  product: Product
+  quantity: number
+}
+
+export type Order = {
+  id: string
+  createdAt: number
+  totalAmount: number
+  products: { quantity: number; product: { id: string; image: string } }[]
 }

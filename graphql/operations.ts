@@ -28,7 +28,7 @@ export const GET_ALL_PRODUCTS = gql`
         image
         description
       }
-      totalPage
+      totalItems
     }
   }
 `
@@ -42,12 +42,6 @@ export const GET_PRODUCT = gql`
       image
       description
     }
-  }
-`
-
-export const GET_SESSION_ID = gql`
-  query GetSessionId($input: CheckoutSessionInput!) {
-    checkoutSession(input: $input)
   }
 `
 
@@ -92,6 +86,44 @@ export const GET_CART_ITEMS = gql`
       image
       description
       quantity
+    }
+  }
+`
+
+export const GET_FILTERED_PRODUCTS = gql`
+  query GetFilteredProducts($term: String!) {
+    searchProducts(query: $term) {
+      id
+      title
+      price
+      image
+      description
+    }
+  }
+`
+
+export const CREATE_ORDER = gql`
+  mutation CreateOrder($uid: ID!) {
+    createOrder(userId: $uid) {
+      id
+      totalAmount
+    }
+  }
+`
+
+export const GET_ORDERS = gql`
+  query GetOrders($userId: ID!) {
+    orders(userId: $userId) {
+      createdAt
+      id
+      totalAmount
+      products {
+        quantity
+        product {
+          id
+          image
+        }
+      }
     }
   }
 `

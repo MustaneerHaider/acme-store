@@ -9,15 +9,15 @@ import Layout from '../components/Layout'
 
 interface Props {
   products: Product[]
-  totalPage: number
+  totalItems: number
 }
 
-const Home: NextPage<Props> = ({ products, totalPage }) => {
+const Home: NextPage<Props> = ({ products, totalItems }) => {
   return (
     <Layout className="bg-gray-100">
       <main className="mx-auto max-w-screen-2xl">
         <Banner />
-        <ProductFeed products={products} totalPage={totalPage} />
+        <ProductFeed products={products} totalItems={totalItems} />
       </main>
     </Layout>
   )
@@ -41,7 +41,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     props: {
       session,
       products: products.prods,
-      totalPage: products.totalPage,
+      totalItems: products.totalItems,
     },
   }
 }

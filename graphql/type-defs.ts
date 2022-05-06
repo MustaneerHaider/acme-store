@@ -16,6 +16,19 @@ const typeDefs = gql`
     userId: ID!
   }
 
+  type OrderProduct {
+    product: Product!
+    quantity: Int!
+  }
+
+  type Order {
+    products: [OrderProduct!]!
+    userId: ID!
+    totalAmount: Int!
+    id: ID!
+    createdAt: Int
+  }
+
   type CartProduct {
     id: ID!
     title: String!
@@ -27,7 +40,7 @@ const typeDefs = gql`
 
   type ProductsResult {
     prods: [Product!]!
-    totalPage: Int!
+    totalItems: Int!
   }
 
   type Response {
@@ -63,8 +76,9 @@ const typeDefs = gql`
   type Query {
     products(page: Int): ProductsResult!
     product(id: ID!): Product
-    checkoutSession(input: CheckoutSessionInput!): ID!
     cartItems(userId: ID!): [CartProduct!]!
+    searchProducts(query: String!): [Product!]!
+    orders(userId: ID!): [Order!]!
   }
 
   type Mutation {
@@ -74,6 +88,7 @@ const typeDefs = gql`
     removeProdFromCart(userId: String!, prodId: String!): Response!
     incrementProdQuantity(userId: String!, prodId: String!): Response!
     decrementProdQuantity(userId: String!, prodId: String!): Response!
+    createOrder(userId: ID!): Order!
   }
 `
 

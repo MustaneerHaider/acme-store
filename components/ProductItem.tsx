@@ -38,10 +38,7 @@ function ProductItem({ title, price, image, description, id }: Product) {
         objectFit="contain"
         onClick={() => router.push(`/product/${id}`)}
       />
-      <h4
-        className="my-3 cursor-default font-roboto text-xl font-bold"
-        onClick={() => router.push(`/product/${id}`)}
-      >
+      <h4 className="my-3 cursor-default font-roboto text-xl font-bold">
         {title}
       </h4>
       <div className="flex">
@@ -53,7 +50,7 @@ function ProductItem({ title, price, image, description, id }: Product) {
       </div>
       <p className="pt-2 text-gray-700 line-clamp-2">{description}</p>
       <h3 className="pt-2 pb-5 font-quick font-semibold">
-        <Currency quantity={price} currency="PKR" />
+        <Currency quantity={price} currency="USD" />
       </h3>
       <button
         className="btn mt-auto"

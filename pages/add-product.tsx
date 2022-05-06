@@ -51,7 +51,6 @@ function AddProduct() {
     })
     setIsSubmitting(false)
     reset({ title: '', price: '', description: '' })
-    console.log(result)
   }
 
   const addImageToProduct = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -70,7 +69,6 @@ function AddProduct() {
           body: fd,
         }
       ).then((res) => res.json())
-      console.log(result)
       setUploading(false)
       setProductImage(result.secure_url)
     }

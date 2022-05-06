@@ -38,23 +38,19 @@ function CheckoutProduct({
         pid: id,
       },
     })
-    console.log(result.data)
     if (result.data) {
       dispatch(removeFromCart({ id: id! }))
     }
   }
 
   const incrementItemQuantity = async () => {
-    console.log('id', id)
     const result = await increaseProductQty({
       variables: {
         uid: session?.user.id,
         pid: id,
       },
     })
-    console.log(result)
     if (result.data) {
-      console.log(result.data)
       dispatch(incrementQuantity({ id: id! }))
     }
   }
@@ -82,7 +78,7 @@ function CheckoutProduct({
         </p>
 
         <h3 className="font-quick text-sm font-semibold">
-          <Currency quantity={price} currency="PKR" />
+          <Currency quantity={price} currency="USD" />
         </h3>
       </div>
 

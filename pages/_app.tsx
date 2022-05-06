@@ -11,6 +11,7 @@ import { useEffect } from 'react'
 import 'aos/dist/aos.css'
 import { Provider as StateProvider } from 'react-redux'
 import store from '../app/store'
+import { PayPalScriptProvider } from '@paypal/react-paypal-js'
 
 const progressBar = new ProgressBar({
   size: 4,
@@ -33,7 +34,13 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
       <SessionProvider session={session}>
         <ApolloProvider client={client}>
           <Toaster position="bottom-center" />
-          <Component {...pageProps} />
+          <PayPalScriptProvider
+            options={{
+              'client-id': process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID!,
+            }}
+          >
+            <Component {...pageProps} />
+          </PayPalScriptProvider>
         </ApolloProvider>
       </SessionProvider>
     </StateProvider>

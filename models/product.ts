@@ -15,4 +15,6 @@ const productSchema = new Schema(
   { timestamps: true }
 )
 
+productSchema.index({ title: 'text' })
+
 export default models.Product || model('Product', productSchema)

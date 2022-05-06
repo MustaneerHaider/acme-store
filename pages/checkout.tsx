@@ -8,58 +8,32 @@ import {
 } from '../app/slices/cartSlice'
 import CheckoutProduct from '../components/CheckoutProduct'
 import Currency from 'react-currency-formatter'
-import { loadStripe } from '@stripe/stripe-js'
-import { useLazyQuery } from '@apollo/client'
-import { GET_CART_ITEMS, GET_SESSION_ID } from '../graphql/operations'
-import { getSession, useSession } from 'next-auth/react'
+import { GET_CART_ITEMS } from '../graphql/operations'
+import { getSession } from 'next-auth/react'
 import client from '../lib/apollo-client'
 import { Product } from '../lib/typings'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import Layout from '../components/Layout'
+import PayPalCheckoutButton from '../components/PayPalCheckoutButton'
 
 interface Props {
   cartProds: Array<Product>
 }
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_KEY!)
-
 const Cart: NextPage<Props> = ({ cartProds }) => {
   const cartItems = useSelector(selectCartItems)
   const total = useSelector(selectTotal)
   const isLastItem = useSelector(selectIsLastItem)
-  const [createCheckoutSession] = useLazyQuery(GET_SESSION_ID)
-  const { data: session } = useSession()
   const dispatch = useDispatch()
+  const [checkout, setCheckout] = useState<boolean>(false)
 
   useEffect(() => {
     dispatch(setCartItems(cartProds))
   }, [cartProds])
 
-  const proceedToCheckout = async () => {
-    const stripe = await stripePromise
-
-    const result = await createCheckoutSession({
-      variables: {
-        input: {
-          items: cartItems.map(
-            ({ title, price, image, description, quantity }) => ({
-              title,
-              image,
-              price,
-              description,
-              quantity,
-            })
-          ),
-          userId: session?.user.id,
-        },
-      },
-    })
-    const sessionId = result.data.checkoutSession
-
-    await stripe?.redirectToCheckout({
-      sessionId,
-    })
+  const handleCheckout = async () => {
+    setCheckout(true)
   }
 
   return (
@@ -83,17 +57,21 @@ const Cart: NextPage<Props> = ({ cartProds }) => {
             <p className="font-quick">
               Subtotal ({cartItems.length} items):{' '}
               <span className="font-semibold">
-                <Currency quantity={total} currency="PKR" />
+                <Currency quantity={total} currency="USD" />
               </span>
             </p>
 
-            <button
-              role="link"
-              className="btn mt-2 whitespace-nowrap"
-              onClick={proceedToCheckout}
-            >
-              Proceed to Checkout
-            </button>
+            {!checkout ? (
+              <button
+                role="link"
+                className="btn mt-2 whitespace-nowrap"
+                onClick={handleCheckout}
+              >
+                Checkout
+              </button>
+            ) : (
+              <PayPalCheckoutButton />
+            )}
           </section>
         )}
       </main>

@@ -1,6 +1,6 @@
 import {
   CartItem,
-  CheckoutSessionInput,
+  OrderItem,
   Product as ProductInput,
   UserInput,
 } from '../lib/typings'
@@ -8,60 +8,43 @@ import { ValidationError } from 'apollo-server-micro'
 import { hashPassword } from '../lib/helpers'
 import connectToDB from '../lib/db'
 import User from '../models/user'
+import Order from '../models/order'
 import Product from '../models/product'
-import Stripe from 'stripe'
+import moment from 'moment-mini'
 
 // connect to database inside resolvers
 connectToDB()
 
 const resolvers = {
   Query: {
+    async orders(_: any, { userId }: { userId: string }) {
+      const orders = await Order.find({ userId }).sort({ createdAt: -1 })
+      const transformedOrders = orders.map((order) => ({
+        ...order._doc,
+        id: order._id.toString(),
+        userId: order.userId.toString(),
+        createdAt: moment(order.createdAt).unix(),
+      }))
+      return transformedOrders
+    },
+    async searchProducts(_: any, { query }: { query: string }) {
+      const products = await Product.find({ $text: { $search: query } })
+      return products
+    },
     async products(_: any, { page = 1 }: { page: number }) {
       const ITEMS_PER_PAGE = 3
+      const totalItems = await Product.find().countDocuments()
       const products = await Product.find()
         .skip((page - 1) * ITEMS_PER_PAGE)
         .limit(ITEMS_PER_PAGE)
-      const totalItems = await Product.find().countDocuments()
       return {
         prods: products,
-        totalPage: Math.ceil(totalItems / ITEMS_PER_PAGE),
+        totalItems,
       }
     },
     async product(_: any, { id }: { id: string }) {
       const product = await Product.findById(id)
       return product
-    },
-    async checkoutSession(_: any, { input }: CheckoutSessionInput) {
-      const { items, userId } = input
-
-      const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-        apiVersion: '2020-08-27',
-      })
-
-      const transformedItems = items.map((item) => ({
-        quantity: item.quantity,
-        price_data: {
-          currency: 'pkr',
-          unit_amount: item.price * 100,
-          product_data: {
-            name: item.title,
-            images: [item.image],
-          },
-        },
-      }))
-
-      const session = await stripe.checkout.sessions.create({
-        payment_method_types: ['card'],
-        mode: 'payment',
-        line_items: transformedItems,
-        success_url: `${process.env.HOST}/success`,
-        cancel_url: `${process.env.HOST}/checkout`,
-        metadata: {
-          userId,
-        },
-      })
-
-      return session.id
     },
     async cartItems(_: any, { userId }: { userId: string }) {
       const user = await User.findById(userId).populate('cart.items.productId')
@@ -76,6 +59,35 @@ const resolvers = {
     },
   },
   Mutation: {
+    async createOrder(_: any, { userId }: { userId: string }) {
+      const user = await User.findById(userId).populate('cart.items.productId')
+      const products: OrderItem[] = user.cart.items.map(
+        ({ productId, quantity }: CartItem) => ({
+          product: {
+            id: productId._id,
+            title: productId.title,
+            price: productId.price,
+            description: productId.description,
+            image: productId.image,
+          },
+          quantity,
+        })
+      )
+
+      const totalAmount = products.reduce(
+        (total, { product, quantity }) => total + product.price * quantity,
+        0
+      )
+
+      const order = await Order.create({
+        userId,
+        products,
+        totalAmount,
+      })
+      await user.clearCart()
+
+      return order
+    },
     async createUser(_: any, { input }: UserInput) {
       const { email, password } = input
 

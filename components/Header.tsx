@@ -1,21 +1,33 @@
 import Logo from './Logo'
 import { SearchIcon, MenuIcon } from '@heroicons/react/outline'
-import { Fragment, useState } from 'react'
+import { ChangeEvent, Fragment, useRef, useState } from 'react'
 import { Drawer } from '@mantine/core'
 import NavLink from './NavLink'
 import NextLink from 'next/link'
 import { useSession, signOut } from 'next-auth/react'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { selectCartItems } from '../app/slices/cartSlice'
+import { getFilteredProducts } from '../app/slices/productsSlice'
+import { AppDispatch } from '../app/store'
+import debounce from 'lodash.debounce'
 
 function Header() {
   const [showDrawer, setShowDrawer] = useState<boolean>(false)
   const { data: session } = useSession()
   const cartItems = useSelector(selectCartItems)
+  const [, setSearchQuery] = useState<string>('')
+  const dispatch = useDispatch<AppDispatch>()
 
   const getItems = () => {
     return cartItems.reduce((len, el) => len + el.quantity!, 0) || '...'
   }
+
+  const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value)
+    dispatch(getFilteredProducts(e.target.value))
+  }
+
+  const debounceOnChange = debounce(handleSearch, 500)
 
   return (
     <Fragment>
@@ -28,6 +40,7 @@ function Header() {
         className="flex flex-col"
       >
         {session && <NavLink link="/checkout">Cart ({getItems()})</NavLink>}
+        {session && <NavLink link="/orders">Orders</NavLink>}
         {!session && <NavLink link="/auth">Authenticate</NavLink>}
         {session && session.user.isAdmin && (
           <NavLink link="/add-product">Add Product</NavLink>
@@ -59,6 +72,7 @@ function Header() {
               type="text"
               placeholder="Search Products..."
               className="flex-grow bg-transparent font-quick text-white placeholder-white outline-none"
+              onChange={debounceOnChange}
             />
             <SearchIcon className="h-5 w-5 cursor-pointer text-white" />
           </div>

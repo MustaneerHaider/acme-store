@@ -59,7 +59,7 @@ const Product: NextPage<Props> = ({ product }) => {
               ))}
             </ul>
             <h3 className="mt-4 font-roboto font-bold">
-              <Currency quantity={product.price} currency="PKR" />
+              <Currency quantity={product.price} currency="USD" />
             </h3>
 
             <button className="btn mt-10" onClick={addItemToCart}>
@@ -67,9 +67,6 @@ const Product: NextPage<Props> = ({ product }) => {
             </button>
           </div>
         </section>
-
-        {/* review section */}
-        <section></section>
       </main>
     </Layout>
   )
@@ -80,13 +77,15 @@ export const getStaticPaths: GetStaticPaths = async () => {
     query: gql`
       query GetAllProducts {
         products {
-          id
+          prods {
+            id
+          }
         }
       }
     `,
   })
-  const paths = data.products.map(({ id }: Product) => ({
-    params: { id },
+  const paths = data.products.prods.map(({ id }: { id: string }) => ({
+    params: { pId: id },
   }))
 
   return {
@@ -96,11 +95,12 @@ export const getStaticPaths: GetStaticPaths = async () => {
 }
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  const prodId = context.params!.id
-  let data
+  const prodId = context.params!.pId
+
+  let response
   let error
   try {
-    data = await client.query({
+    response = await client.query({
       query: GET_PRODUCT,
       variables: {
         id: prodId,
@@ -118,9 +118,8 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
   return {
     props: {
-      product: data?.data.product,
+      product: response?.data.product,
     },
-    revalidate: 60,
   }
 }
 
