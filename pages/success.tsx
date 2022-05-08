@@ -1,8 +1,11 @@
 import { CheckCircleIcon } from '@heroicons/react/solid'
+import { useRouter } from 'next/router'
 import React from 'react'
 import Layout from '../components/Layout'
 
 function Success() {
+  const router = useRouter()
+
   return (
     <Layout title="Sucess" showFooter={false} className="h-screen bg-gray-100">
       <main className="mx-auto max-w-5xl">
@@ -20,7 +23,11 @@ function Success() {
             order(s) please press the link below.
           </p>
 
-          <button role="link" className="btn mt-5">
+          <button
+            role="link"
+            className="btn mt-5"
+            onClick={() => router.push('/orders')}
+          >
             Go to my orders
           </button>
         </div>

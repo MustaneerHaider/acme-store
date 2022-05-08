@@ -13,7 +13,7 @@ interface Props {
 const Orders: NextPage<Props> = ({ orders }) => {
   return (
     <Layout title="Orders" showFooter={false}>
-      <main className="mx-5 mt-10 max-w-7xl pb-5 lg:mx-auto">
+      <main className="mx-5 mt-10 max-w-6xl pb-5 lg:mx-auto">
         <section>
           <h1 className="border-b border-black pb-2 font-roboto text-3xl">
             Your Orders
@@ -22,7 +22,7 @@ const Orders: NextPage<Props> = ({ orders }) => {
             {orders.length} Orders
           </h4>
 
-          <div className="space-y-6 pt-8">
+          <div className="flex-wrap space-y-6 pt-8">
             {orders.map((order) => (
               <Order
                 id={order.id}

@@ -12,11 +12,7 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(redirectUrl)
   }
 
-  if (
-    token ||
-    pathname.includes('/api/auth') ||
-    pathname.includes('/graphql')
-  ) {
+  if (token || pathname.includes('/api/auth') || pathname.includes('graphql')) {
     return NextResponse.next()
   }
 

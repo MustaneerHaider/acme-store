@@ -19,7 +19,6 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "pages/api/webhook.ts",
     "components/PayPalCheckoutButton.js"
   ],
   "exclude": ["node_modules"]
