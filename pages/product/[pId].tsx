@@ -1,5 +1,4 @@
-import { gql } from 'apollo-server-micro'
-import { GetStaticPaths, GetStaticProps, NextPage } from 'next'
+import { GetServerSideProps, NextPage } from 'next'
 import Image from 'next/image'
 import { ADD_TO_CART, GET_PRODUCT } from '../../graphql/operations'
 import client from '../../lib/apollo-client'
@@ -72,29 +71,7 @@ const Product: NextPage<Props> = ({ product }) => {
   )
 }
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  const { data } = await client.query({
-    query: gql`
-      query GetAllProducts {
-        products {
-          prods {
-            id
-          }
-        }
-      }
-    `,
-  })
-  const paths = data.products.prods.map(({ id }: { id: string }) => ({
-    params: { pId: id },
-  }))
-
-  return {
-    paths,
-    fallback: 'blocking',
-  }
-}
-
-export const getStaticProps: GetStaticProps = async (context) => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
   const prodId = context.params!.pId
 
   let response
